@@ -39,6 +39,13 @@ struct MenuView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $model.config.enabled) {
+                Text("ブースト制御").font(.headline)
+            }
+            .toggleStyle(.switch)
+
+            Divider()
+
             if let s = model.status, model.daemonAlive {
                 HStack {
                     Text(modeLabel(s.mode)).font(.headline)
@@ -61,11 +68,15 @@ struct MenuView: View {
 
             Divider()
 
-            Toggle("高温時ブーストを有効にする", isOn: $model.config.enabled)
-            tempSlider("ブースト開始", value: $model.config.boostStartTemp, range: 50...100)
-            tempSlider("全開", value: $model.config.fullSpeedTemp, range: 55...105)
-            tempSlider("標準制御に戻す", value: $model.config.releaseTemp, range: 40...95)
-            rpmSlider()
+            // オフの間はしきい値を触れないようにする
+            Group {
+                tempSlider("ブースト開始", value: $model.config.boostStartTemp, range: 50...100)
+                tempSlider("全開", value: $model.config.fullSpeedTemp, range: 55...105)
+                tempSlider("標準制御に戻す", value: $model.config.releaseTemp, range: 40...95)
+                rpmSlider()
+            }
+            .disabled(!model.config.enabled)
+            .opacity(model.config.enabled ? 1 : 0.4)
             if let e = model.saveError { Text(e).font(.caption).foregroundStyle(.red) }
 
             Divider()
