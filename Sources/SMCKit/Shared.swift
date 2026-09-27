@@ -14,6 +14,9 @@ public struct FanConfig: Codable, Equatable {
     public var boostStartTemp: Double = 75
     /// この温度で最大回転（°C）
     public var fullSpeedTemp: Double = 85
+    /// ブースト時の最大回転数（ファン最大回転数に対する %）。
+    /// ブースト開始時にシステムが回していた回転数より下げることはない
+    public var boostMaxPercent: Double = 100
     /// 直近 releaseDelay 秒の平均温度がこれ未満なら標準制御に戻す（°C）
     public var releaseTemp: Double = 68
     public var releaseDelay: Double = 30
@@ -31,6 +34,7 @@ public struct FanConfig: Codable, Equatable {
         enabled = try c.decodeIfPresent(Bool.self, forKey: .enabled) ?? d.enabled
         boostStartTemp = try c.decodeIfPresent(Double.self, forKey: .boostStartTemp) ?? d.boostStartTemp
         fullSpeedTemp = try c.decodeIfPresent(Double.self, forKey: .fullSpeedTemp) ?? d.fullSpeedTemp
+        boostMaxPercent = try c.decodeIfPresent(Double.self, forKey: .boostMaxPercent) ?? d.boostMaxPercent
         releaseTemp = try c.decodeIfPresent(Double.self, forKey: .releaseTemp) ?? d.releaseTemp
         releaseDelay = try c.decodeIfPresent(Double.self, forKey: .releaseDelay) ?? d.releaseDelay
         interval = try c.decodeIfPresent(Double.self, forKey: .interval) ?? d.interval

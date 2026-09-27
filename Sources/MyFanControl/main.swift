@@ -65,6 +65,7 @@ struct MenuView: View {
             tempSlider("ブースト開始", value: $model.config.boostStartTemp, range: 50...100)
             tempSlider("全開", value: $model.config.fullSpeedTemp, range: 55...105)
             tempSlider("標準制御に戻す", value: $model.config.releaseTemp, range: 40...95)
+            rpmSlider()
             if let e = model.saveError { Text(e).font(.caption).foregroundStyle(.red) }
 
             Divider()
@@ -87,6 +88,21 @@ struct MenuView: View {
         case "auto": return "✅ 標準制御"
         case "disabled": return "⏸ 無効（標準制御）"
         default: return "⚠️ エラー"
+        }
+    }
+
+    /// ブースト時の最大回転数（% で保存し、rpm も併記）
+    func rpmSlider() -> some View {
+        let maxRPM = model.status?.fans.map(\.max).max()
+        let pct = model.config.boostMaxPercent
+        return VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("ブースト最大回転数")
+                Spacer()
+                Text("\(Int(pct))%" + (maxRPM.map { " (\(Int($0 * pct / 100)) rpm)" } ?? "")).monospacedDigit()
+            }
+            Slider(value: $model.config.boostMaxPercent, in: 30...100, step: 5)
+            Text("標準制御の回転数より下がることはありません").font(.caption2).foregroundStyle(.secondary)
         }
     }
 

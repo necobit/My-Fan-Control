@@ -125,7 +125,9 @@ public final class FanController {
         let ratio = min(max((temp - config.boostStartTemp) / span, 0), 1)
         try unlock()
         for i in 0..<fanCount {
-            let curve = fanMin[i] + (fanMax[i] - fanMin[i]) * ratio
+            // 開始温度で最低回転、全開温度で設定上限。ただし標準制御の回転数（floor）は下回らない
+            let cap = min(max(fanMax[i] * config.boostMaxPercent / 100, fanMin[i]), fanMax[i])
+            let curve = fanMin[i] + (cap - fanMin[i]) * ratio
             var target = max(curve, floorRPM[i])
             // 上げるのは即座に、下げるのはゆっくり（1周期あたり最大200rpm）
             if target < lastTarget[i] { target = max(target, lastTarget[i] - 200) }
