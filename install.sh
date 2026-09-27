@@ -11,8 +11,9 @@ fi
 swift build -c release
 BIN=.build/release
 
-# アプリバンドル作成
+# アプリバンドル作成（起動中の旧バージョンは終了させる）
 APP=/Applications/MyFanControl.app
+pkill -x MyFanControl 2>/dev/null || true
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS"
 cp "$BIN/MyFanControl" "$APP/Contents/MacOS/"
